@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+
+    <style type="text/css" media="screen">
+
+      body {
+        background:#fff; margin:0
+      }
+
+      svg {
+        display:block; position:absolute;
+        top:30%; left:5%; width:95%; height:70%; background:#fff;
+      }
+
+      text {
+        stroke: "teal", font-size: 12px; font-family: "sans-serif";
+      }
+
+    </style>
+
+</head>
+
+<body>
+
+    <script>
+
+    var xscale = d3.scaleLinear()
+             .range([66, 1300]);
+
+    var rscale = d3.scalePow()
+              .domain([1, 48500])
+              .range([5, 100])
+              .exponent(.6);
+
+    var svg = d3.select("body")
+                .append("svg")
+
+    var tooltip = d3.select("body")
+        .append("div")
+        .style("position", "absolute")
+        .style("visibility", "hidden")
+        .style("padding", "5px")
+        .style("background-color", "lightsteelblue")
+        .style("border-radius", "6px")
+        .style("text-align", "center")
+        .style("font-family", "Arial")
+        .style("font-size", "10px")
+        .style("width", "200px")
+        .style("opacity", .85)
+        .text("");
+
+    d3.csv("immigration.csv", function(data) {
+
+            xscale.domain([0, 364]);
+
+            svg.selectAll("circle")
+                .data(data
+                .sort(function(a, b) { return b.BestGuess - a.BestGuess; })
+              )
+                .enter()
+                .append("circle")
+                    .attr("cx", function(d) {
+                      return xscale(d.Day)
+                    })
+                    .attr("cy", function(d) {
+                      return 100 //+ (Math.random()*100)
+                    })
+                    .attr("r", function(d){
+                      return rscale(d.BestGuess)
+                    })
+                    .attr("fill", function(d) { if (d.ProAnti==2) {return "red"}
+                    else {return "teal"}
+                    })
+                    .attr("stroke", "#fff")
+                    .attr("fill-opacity", .6)
+                .on("mouseover", function(d) {
+                    tooltip.html("Claim: " + d.Claim
+                                  + "<br>" + "Crowd Size: " + d.BestGuess
+                                  + "<br>" + "Actor: " + d.Actor
+                                  + "<br>" + "Location: " + d['City/Town'] + ", " + d.StateTerritory);
+                    return tooltip.style("visibility", "visible");
+                })
+                .on("mousemove", function() {
+                    return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
+                })
+                .on("mouseout", function() {
+                    return tooltip.style("visibility", "hidden");
+                });
+    });
+
+    </script>
+</body>
+</html>
