@@ -7,12 +7,74 @@
     <style type="text/css" media="screen">
 
       body {
-        background:#fff; margin:0
+        background:#2D3F47; margin:0
       }
 
-      svg {
+      p {
+        font-family: monospace;
+        color: lightgray;
+        text-align: center;
+      }
+
+      a {
+        font-family: monospace;
+        color: lightgray;
+        font-weight: bold;
+      }
+
+      h1 {
+        font-size: 2em;
+        margin-top: 50px;
+        margin-bottom: 0.67em;
+        font-weight: normal;
+        font-family: monospace;
+        color: lightgray;
+        text-align: center;
+      }
+
+
+      h2 {
+        font-size: 18px;
+        font-weight: normal;
+        font-family: monospace;
+        color: lightgray;
+        text-align: center;
+      }
+
+      .timelinetitle {
+        font-size: 18px;
+        font-weight: normal;
+        font-family: monospace;
+        text-align: center;
+      }
+
+      .outer-div {
+        padding: 30px;
+      }
+
+      #explainer {
+        margin: 0 auto;
+        max-width: 700px;
+      }
+
+      #svg1 {
         display:block; position:absolute;
-        top:30%; left:5%; width:95%; height:70%; background:#fff;
+        top:45%; left:5%; width:90%; height:20%; background:#2D3F47;
+      }
+
+      #svg2 {
+        display:block; position:absolute;
+        top:65%; left:5%; width:90%; height:20%; background:#2D3F47;
+      }
+
+      #svg3 {
+        display:block; position:absolute;
+        top:85%; left:5%; width:90%; height:20%; background:#2D3F47;
+      }
+
+      #svg4 {
+        display:block; position:absolute;
+        top:105%; left:5%; width:90%; height:20%; background:#2D3F47;
       }
 
       text {
@@ -25,19 +87,68 @@
 
 <body>
 
+    <h1>Era of Discontent: </h1>
+    <h2>364 days of protests, rallies, demonstrations and crowds.</h2>
+
+    <p>created by Sally Gao</p>
+
+    <div class="outer-div"><div id="explainer">
+    <p>This visualization shows how many Americans rallied for and against immigration, race and Donald Trump between Feb 1, 2017 and January 31, 2018.</p>
+    <p>All data were obtained from the <a href="https://sites.google.com/view/crowdcountingconsortium/home" target="_blank">Crowd Counting Consortium.</a></p>
+    <p>Each bubble represents an event. Hover for details.</p>
+  </div></div>
+
+    <svg id="svg1"></svg>
+    <svg id="svg2"></svg>
+    <svg id="svg3"></svg>
+    <svg id="svg4"></svg>
+
     <script>
-
+    // scale for x-axis (time)
     var xscale = d3.scaleLinear()
-             .range([66, 1300]);
+             .domain([0, 364])
+             .range([20, 1250]);
 
+    // scale for circle radius (crowd size)
     var rscale = d3.scalePow()
-              .domain([1, 48500])
-              .range([5, 100])
+              .range([5, 70])
               .exponent(.6);
 
-    var svg = d3.select("body")
-                .append("svg")
+    var min_crowdsize = 50;
 
+    // append the svg
+    var svg1 = d3.select("#svg1");
+    var svg2 = d3.select("#svg2");
+    var svg3 = d3.select("#svg3");
+    var svg4 = d3.select("#svg4");
+
+    svg1.append("text")
+       .attr("y", 20)
+       .attr("x", "50%")
+       .attr('text-anchor', 'middle')
+       .attr("class", "timelinetitle")
+       .style("fill", "lightgray")
+       .text("Immigration");
+
+   svg2.append("text")
+      .attr("y", 20)
+      .attr("x", "50%")
+      .attr('text-anchor', 'middle')
+      .attr("class", "timelinetitle")
+      .style("fill", "lightgray")
+      .text("Race");
+
+    svg3.append("text")
+       .attr("y", 20)
+       .attr("x", "50%")
+       .attr('text-anchor', 'middle')
+       .attr("class", "timelinetitle")
+       .style("fill", "lightgray")
+       .text("Trump");
+
+
+
+    // define tooltip
     var tooltip = d3.select("body")
         .append("div")
         .style("position", "absolute")
@@ -52,11 +163,13 @@
         .style("opacity", .85)
         .text("");
 
+    // add immigration timeline
     d3.csv("immigration.csv", function(data) {
 
-            xscale.domain([0, 364]);
+            rscale.domain([min_crowdsize, 250000]);
 
-            svg.selectAll("circle")
+            // add bubbles
+            svg1.selectAll("circle")
                 .data(data
                 .sort(function(a, b) { return b.BestGuess - a.BestGuess; })
               )
@@ -66,7 +179,7 @@
                       return xscale(d.Day)
                     })
                     .attr("cy", function(d) {
-                      return 100 //+ (Math.random()*100)
+                      return 80 //+ (Math.random()*100)
                     })
                     .attr("r", function(d){
                       return rscale(d.BestGuess)
@@ -77,10 +190,11 @@
                     .attr("stroke", "#fff")
                     .attr("fill-opacity", .6)
                 .on("mouseover", function(d) {
-                    tooltip.html("Claim: " + d.Claim
-                                  + "<br>" + "Crowd Size: " + d.BestGuess
-                                  + "<br>" + "Actor: " + d.Actor
-                                  + "<br>" + "Location: " + d['City/Town'] + ", " + d.StateTerritory);
+                    tooltip.html("<strong>Claim: </strong><br>" + d.Claim
+                                  + "<br><br>" + "<strong>Actor: </strong><br>" + d.Actor
+                                  + "<br><br>" + d.DateTime + "<br>" + d['City/Town'] + ", " + d.StateTerritory
+                                  + "<br><br>" + "<strong>Crowd Size: </strong>" + +d.BestGuess
+                                );
                     return tooltip.style("visibility", "visible");
                 })
                 .on("mousemove", function() {
@@ -90,6 +204,131 @@
                     return tooltip.style("visibility", "hidden");
                 });
     });
+
+    // add race timeline
+    d3.csv("race.csv", function(data) {
+
+            rscale.domain([min_crowdsize, 250000]);
+
+            // add bubbles
+            svg2.selectAll("circle")
+                .data(data
+                  .sort(function(a, b) { return b.BestGuess - a.BestGuess; }))
+                .enter()
+                .append("circle")
+                    .attr("cx", function(d) {
+                      return xscale(d.Day)
+                    })
+                    .attr("cy", function(d) {
+                      return 80 //+ (Math.random()*100)
+                    })
+                    .attr("r", function(d){
+                      return rscale(d.BestGuess)
+                    })
+                    .attr("fill", function(d) { if (d.ProAnti==2) {return "red"}
+                    else {return "teal"}
+                    })
+                    .attr("stroke", "#fff")
+                    .attr("fill-opacity", .6)
+                .on("mouseover", function(d) {
+                    tooltip.html("<strong>Claim: </strong><br>" + d.Claim
+                                  + "<br><br>" + "<strong>Actor: </strong><br>" + d.Actor
+                                  + "<br><br>" + d.DateTime + "<br>" + d['City/Town'] + ", " + d.StateTerritory
+                                  + "<br><br>" + "<strong>Crowd Size: </strong>" + +d.BestGuess
+                                );
+                    return tooltip.style("visibility", "visible");
+                })
+                .on("mousemove", function() {
+                    return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
+                })
+                .on("mouseout", function() {
+                    return tooltip.style("visibility", "hidden");
+                });
+    });
+
+
+    // add Trump timeline
+    d3.csv("trump.csv", function(data) {
+
+            rscale.domain([min_crowdsize, 250000]);
+
+            // add bubbles
+            svg3.selectAll("circle")
+                .data(data
+                  .sort(function(a, b) { return b.BestGuess - a.BestGuess; }))
+                .enter()
+                .append("circle")
+                    .attr("cx", function(d) {
+                      return xscale(d.Day)
+                    })
+                    .attr("cy", function(d) {
+                      return 80 //+ (Math.random()*100)
+                    })
+                    .attr("r", function(d){
+                      return rscale(d.BestGuess)
+                    })
+                    .attr("fill", function(d) { if (d.ProAnti==2) {return "red"}
+                    else {return "teal"}
+                    })
+                    .attr("stroke", "#fff")
+                    .attr("fill-opacity", .6)
+                .on("mouseover", function(d) {
+                    tooltip.html("<strong>Claim: </strong><br>" + d.Claim
+                                  + "<br><br>" + "<strong>Actor: </strong><br>" + d.Actor
+                                  + "<br><br>" + d.DateTime + "<br>" + d['City/Town'] + ", " + d.StateTerritory
+                                  + "<br><br>" + "<strong>Crowd Size: </strong>" + +d.BestGuess
+                                );
+                    return tooltip.style("visibility", "visible");
+                })
+                .on("mousemove", function() {
+                    return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
+                })
+                .on("mouseout", function() {
+                    return tooltip.style("visibility", "hidden");
+                });
+    });
+
+    // add MeToo timeline
+    d3.csv("metoo.csv", function(data) {
+
+            rscale.domain([min_crowdsize, 250000]);
+
+            // add bubbles
+            svg4.selectAll("circle")
+                .data(data
+                  .sort(function(a, b) { return b.BestGuess - a.BestGuess; }))
+                .enter()
+                .append("circle")
+                    .attr("cx", function(d) {
+                      return xscale(d.Day)
+                    })
+                    .attr("cy", function(d) {
+                      return 80 //+ (Math.random()*100)
+                    })
+                    .attr("r", function(d){
+                      return rscale(d.BestGuess)
+                    })
+                    .attr("fill", function(d) { if (d.ProAnti==2) {return "red"}
+                    else {return "teal"}
+                    })
+                    .attr("stroke", "#fff")
+                    .attr("fill-opacity", .6)
+                .on("mouseover", function(d) {
+                    tooltip.html("<strong>Claim: </strong><br>" + d.Claim
+                                  + "<br><br>" + "<strong>Actor: </strong><br>" + d.Actor
+                                  + "<br><br>" + d.DateTime + "<br>" + d['City/Town'] + ", " + d.StateTerritory
+                                  + "<br><br>" + "<strong>Crowd Size: </strong>" + +d.BestGuess
+                                );
+                    return tooltip.style("visibility", "visible");
+                })
+                .on("mousemove", function() {
+                    return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
+                })
+                .on("mouseout", function() {
+                    return tooltip.style("visibility", "hidden");
+                });
+    });
+
 
     </script>
 </body>
