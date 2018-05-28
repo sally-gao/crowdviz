@@ -30,10 +30,15 @@
     <svg id="svg8"></svg>
 
     <script>
+
+    // get window width so we can size timelines
+    width = window.innerWidth;
+    rightspace = width * .85;
+
     // scale for x-axis (time)
     var xscale = d3.scaleLinear()
              .domain([0, 364])
-             .range([20, 1250]);
+             .range([20, rightspace]);
 
     // scale for circle radius (crowd size)
     var rscale = d3.scalePow()
@@ -42,7 +47,7 @@
 
     var min_crowdsize = 50;
 
-    // append the svg
+    // append the SVGs
     var svg1 = d3.select("#svg1");
     var svg2 = d3.select("#svg2");
     var svg3 = d3.select("#svg3");

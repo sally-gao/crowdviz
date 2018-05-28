@@ -50,42 +50,42 @@ h2 {
 }
 
 #svg1 {
-  display:block; position:absolute;
-  top:45%; left:5%; width:90%; height:20%; background:#2D3F47;
+  display:block; position: relative;
+  left:5%; width:90%; height:25%; background:#2D3F47;
 }
 
 #svg2 {
-  display:block; position:absolute;
-  top:65%; left:5%; width:90%; height:20%; background:#2D3F47;
+  display:block; position: relative;
+  left:5%; width:90%; height: 25%; background:#2D3F47;
 }
 
 #svg3 {
-  display:block; position:absolute;
-  top:85%; left:5%; width:90%; height:20%; background:#2D3F47;
+  display:block; position:relative;
+  top:95%; left:5%; width:90%; height:25%; background:#2D3F47;
 }
 
 #svg4 {
-  display:block; position:absolute;
-  top:105%; left:5%; width:90%; height:20%; background:#2D3F47;
+  display:block; position:relative;
+  top:105%; left:5%; width:90%; height:25%; background:#2D3F47;
 }
 
 #svg5 {
-  display:block; position:absolute;
-  top:125%; left:5%; width:90%; height:20%; background:#2D3F47;
+  display:block; position:relative;
+  top:125%; left:5%; width:90%; height:25%; background:#2D3F47;
 }
 
 #svg6 {
-  display:block; position:absolute;
-  top:145%; left:5%; width:90%; height:20%; background:#2D3F47;
+  display:block; position:relative;
+  top:145%; left:5%; width:90%; height:25%; background:#2D3F47;
 }
 
 #svg7 {
-  display:block; position:absolute;
-  top:165%; left:5%; width:90%; height:20%; background:#2D3F47;
+  display:block; position:relative;
+  top:165%; left:5%; width:90%; height:25%; background:#2D3F47;
 }
 
 #svg8 {
-  display:block; position:absolute;
+  display:block; position:relative;
   top:185%; left:5%; width:90%; height:40%; background:#2D3F47;
 }
 
